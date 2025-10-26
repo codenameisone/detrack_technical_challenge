@@ -1,0 +1,7 @@
+.git
+.gitignore
+coverage/
+spec/examples.txt
+*.log
+tmp/
+.DS_Store

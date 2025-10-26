@@ -1,0 +1,17 @@
+[
+  {
+    "id": "not_a_number",
+    "full_name": "Invalid ID Type",
+    "email": "invalid@example.com"
+  },
+  {
+    "id": 2,
+    "full_name": 12345,
+    "email": "invalid.name.type@example.com"
+  },
+  {
+    "id": 3,
+    "full_name": "Invalid Email Type",
+    "email": true
+  }
+]

@@ -1,0 +1,15 @@
+[
+  {
+    "id": 1,
+    "full_name": "Valid Client",
+    "email": "valid@example.com"
+  },
+  {
+    "id": 2,
+    "full_name": "Missing Email"
+  },
+  {
+    "id": 3,
+    "email": "missing.name@example.com"
+  }
+]

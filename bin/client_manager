@@ -1,0 +1,116 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require 'bundler/setup'
+require 'thor'
+require_relative '../lib/client_repository'
+require_relative '../lib/queries/search_clients'
+require_relative '../lib/queries/find_duplicates'
+
+# Command-line interface for client management operations.
+# Provides commands for searching clients and finding duplicates.
+#
+# Usage:
+#   bin/client_manager search <query>
+#   bin/client_manager duplicates
+class ClientManagerCLI < Thor
+  class_option :file, type: :string, desc: 'Path to clients JSON file'
+
+  desc 'search QUERY', 'Search for clients by name (partial match, case-insensitive)'
+  long_desc <<~DESC
+    Searches through all clients and returns those with names partially matching
+    the given search query. The search is case-insensitive.
+
+    Examples:
+      bin/client_manager search john
+      bin/client_manager search "smith"
+  DESC
+  def search(query)
+    clients = load_clients_or_exit
+
+    result = Queries::SearchClients.new(clients: clients).call(search_term: query)
+
+    error_exit(result.error) if result.failure?
+
+    display_search_results(query, result.value)
+  end
+
+  desc 'duplicates', 'Find clients with duplicate email addresses'
+  long_desc <<~DESC
+    Analyzes all clients and identifies any duplicate email addresses.
+    Displays all clients sharing the same email.
+
+    Example:
+      bin/client_manager duplicates
+  DESC
+  def duplicates
+    clients = load_clients_or_exit
+
+    result = Queries::FindDuplicates.new(clients: clients).call
+
+    error_exit(result.error) if result.failure?
+
+    display_duplicate_results(result.value)
+  end
+
+  def self.exit_on_failure?
+    true
+  end
+
+  private
+
+  def load_clients_or_exit
+    file_path = options[:file]
+    repository = file_path ? ClientRepository.new(file_path: file_path) : ClientRepository.new
+    result = repository.load_all
+
+    error_exit("Failed to load clients: #{result.error}") if result.failure?
+
+    result.value
+  end
+
+  def display_search_results(query, clients)
+    puts "\nSearch results for '#{query}':"
+    puts '=' * 80
+
+    if clients.empty?
+      puts 'No clients found matching your search.'
+      return
+    end
+
+    puts "Found #{clients.size} client(s):\n\n"
+    clients.each do |client|
+      puts "  ID: #{client.id}"
+      puts "  Name: #{client.full_name}"
+      puts "  Email: #{client.email}"
+      puts
+    end
+  end
+
+  def display_duplicate_results(duplicates)
+    puts "\nDuplicate Email Analysis:"
+    puts '=' * 80
+
+    if duplicates.empty?
+      puts 'No duplicate emails found.'
+      return
+    end
+
+    puts "Found #{duplicates.size} duplicate email(s):\n\n"
+    duplicates.each do |email, clients|
+      puts "Email: #{email} (#{clients.size} occurrences)"
+      clients.each do |client|
+        puts "  - ID: #{client.id}, Name: #{client.full_name}"
+      end
+      puts
+    end
+  end
+
+  def error_exit(message)
+    warn "Error: #{message}"
+    exit 1
+  end
+end
+
+# Run CLI if executed directly
+ClientManagerCLI.start(ARGV) if $PROGRAM_NAME == __FILE__

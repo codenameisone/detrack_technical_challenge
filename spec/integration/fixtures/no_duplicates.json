@@ -1,0 +1,17 @@
+[
+  {
+    "id": 1,
+    "full_name": "Alice Anderson",
+    "email": "alice@unique.com"
+  },
+  {
+    "id": 2,
+    "full_name": "Bob Brown",
+    "email": "bob@unique.com"
+  },
+  {
+    "id": 3,
+    "full_name": "Carol Clark",
+    "email": "carol@unique.com"
+  }
+]

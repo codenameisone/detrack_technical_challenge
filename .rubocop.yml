@@ -1,0 +1,41 @@
+plugins:
+  - rubocop-performance
+  - rubocop-rspec
+
+AllCops:
+  TargetRubyVersion: 3.3
+  NewCops: enable
+  Exclude:
+    - 'vendor/**/*'
+    - 'tmp/**/*'
+
+Metrics/MethodLength:
+  Max: 20
+
+Layout/LineLength:
+  Max: 110
+
+Style/Documentation:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Enabled: true
+  EnforcedStyle: always
+
+RSpec/ExampleLength:
+  Max: 15
+
+RSpec/MultipleExpectations:
+  Max: 4
+  Exclude:
+    - 'spec/integration/**/*'
+
+RSpec/IndexedLet:
+  Enabled: false
+
+RSpec/LeadingSubject:
+  Enabled: false
+
+RSpec/AnyInstance:
+  Exclude:
+    - 'spec/support/cli_helper.rb'

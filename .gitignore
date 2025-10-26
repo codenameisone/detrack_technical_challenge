@@ -1,0 +1,13 @@
+/log/*
+/tmp/*
+!/log/.keep
+!/tmp/.keep
+
+.bundle/
+/coverage/
+.env
+.DS_Store
+.rspec
+spec/examples.txt
+
+.vscode/

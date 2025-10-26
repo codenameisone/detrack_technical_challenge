@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# Run RSpec tests in Docker
+# Usage:
+#   ./scripts/test                    # Run all tests
+#   ./scripts/test spec/models        # Run specific test directory
+#   ./scripts/test spec/file_spec.rb  # Run specific test file
+
+set -e
+
+# Build Docker image
+echo "Building Docker image..."
+docker build -t client-manager . -q
+
+# Run tests
+if [ $# -eq 0 ]; then
+  echo "Running all tests..."
+  docker run --rm client-manager bundle exec rspec
+else
+  echo "Running tests: $*"
+  docker run --rm client-manager bundle exec rspec "$@"
+fi

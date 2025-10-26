@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# Run client_manager CLI commands in Docker
+# Usage:
+#   ./scripts/run_cli search john                        # Search for "john"
+#   ./scripts/run_cli search "jane smith"                # Search with spaces
+#   ./scripts/run_cli duplicates                         # Find duplicates
+#   ./scripts/run_cli search john --file=custom.json     # Use custom file
+#   ./scripts/run_cli duplicates --file=custom.json      # Use custom file
+#   ./scripts/run_cli help                               # Show help
+
+set -e
+
+if [ $# -eq 0 ]; then
+  echo "Error: Command required"
+  echo ""
+  echo "Usage:"
+  echo "  ./scripts/run_cli search <query> [--file=path]"
+  echo "  ./scripts/run_cli duplicates [--file=path]"
+  echo "  ./scripts/run_cli help"
+  echo ""
+  echo "Examples:"
+  echo "  ./scripts/run_cli search john"
+  echo "  ./scripts/run_cli search \"jane smith\""
+  echo "  ./scripts/run_cli duplicates"
+  echo "  ./scripts/run_cli help"
+  exit 1
+fi
+
+# Build Docker image
+docker build -t client-manager . -q
+
+# Run CLI command with all arguments
+docker run --rm client-manager bin/client_manager "$@"

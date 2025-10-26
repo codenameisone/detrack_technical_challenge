@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# Run Rubocop linter in Docker
+# Usage:
+#   ./scripts/lint           # Run Rubocop
+#   ./scripts/lint -a        # Auto-fix issues
+#   ./scripts/lint -A        # Auto-fix including unsafe
+
+set -e
+
+# Build Docker image
+echo "Building Docker image..."
+docker build -t client-manager . -q
+
+# Run Rubocop
+if [ $# -eq 0 ]; then
+  echo "Running Rubocop..."
+  docker run --rm client-manager bundle exec rubocop
+else
+  echo "Running Rubocop with args: $*"
+  # Mount current directory for auto-fix to persist changes
+  docker run --rm -v "$(pwd)":/app client-manager bundle exec rubocop "$@"
+fi
